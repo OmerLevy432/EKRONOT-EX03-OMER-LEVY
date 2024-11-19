@@ -6,7 +6,7 @@ using std::cout;
 
 Vector::Vector(int n)
 {
-	// checks if the size of the vector is valid (bigger/equal to 2)
+	// checks if the size of the vector is valid (bigger/equal to SMALLEST_VECTOR_SIZE)
 	if (n < SMALLEST_VECTOR_SIZE)
 	{
 		n = SMALLEST_VECTOR_SIZE;
@@ -16,6 +16,22 @@ Vector::Vector(int n)
 	this->_resizeFactor = n;
 	this->_size = 0;
 	this->_elements = new int(n);
+}
+
+Vector::Vector(const Vector& other)
+{
+	this->_capacity = other.capacity();
+	this->_resizeFactor = other.capacity();
+	this->_size = 0;
+	this->_elements = other.copyElements();
+}
+
+Vector Vector::operator=(const Vector& other)
+{
+	this->_capacity = other.capacity();
+	this->_resizeFactor = other.capacity();
+	this->_size = 0;
+	this->_elements = other.copyElements();
 }
 
 Vector::~Vector()
@@ -40,6 +56,19 @@ int Vector::capacity() const
 int Vector::resizeFactor() const
 {
 	return this->_resizeFactor;
+}
+
+int* Vector::copyElements() const
+{
+	int* elementsCopy = new int[this->_capacity];
+	int i = 0;
+
+	// copies the elements
+	for (i = 0; i < this->_capacity; i++)
+	{
+		elementsCopy[i] = this->_elements[i];
+	}
+	return elementsCopy;
 }
 
 bool Vector::empty() const
@@ -68,7 +97,8 @@ void Vector::reserve(int n)
 	// checks if n is bigger than the current capacity
 	if (n > this->_capacity)
 	{
-		int* newArray = new int[n];
+		int arraySize = ((n - this->_capacity) / this->_resizeFactor) * this->_resizeFactor + (((n % this->_resizeFactor) != 0) * this->_resizeFactor);
+		int* newArray = new int[arraySize];
 		int i = 0;
 
 		// copies the old array into the new one
@@ -76,7 +106,12 @@ void Vector::reserve(int n)
 		{
 			newArray[i] = this->_elements[i];
 		}
-		this->_capacity = n;
+
+		// sets the new array
+		this->_capacity = arraySize;
+		delete this->_elements;
+		this->_elements = newArray;
+		newArray = nullptr;
 	}
 }
 
@@ -88,4 +123,49 @@ void Vector::push_back(const int& val)
 		this->reserve(this->_capacity + this->_resizeFactor);
 	}
 	this->_elements[this->_size++] = val;
+}
+
+void Vector::resize(int n)
+{
+	// checks if the size of the vector is reduced
+	if (n < this->_capacity)
+	{
+		// creates a new array for the elements
+		int* newArray = new int[n];
+		int i = 0;
+
+		// moves the elements to the new array
+		for (i = 0; i < n; i++)
+		{
+			newArray[i] = this->_elements[i];
+		}
+
+		// sets the new array
+		delete this->_elements;
+		this->_elements = newArray;
+		newArray = nullptr;
+		this->_size = n;
+	}
+	else
+	{
+		this->reserve(n);
+	}
+}
+
+void Vector::resize(int n, const int& val)
+{
+	int oldCapacity = this->_capacity;
+	this->resize(n);
+
+	// checks if the size of the vector got bigger
+	if (n > oldCapacity)
+	{
+		int i = 0;
+		
+		// fills the new valeus with given variable val
+		for (i = oldCapacity; i < this->_capacity; i++)
+		{
+			this->_elements[i] = val;
+		}
+	}
 }

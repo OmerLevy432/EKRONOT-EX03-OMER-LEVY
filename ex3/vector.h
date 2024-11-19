@@ -15,20 +15,27 @@ private:
 	int _resizeFactor;
 
 public:
-	// constructor
+	// constructors
 	Vector(int n);
+	Vector(const Vector& other);
 	
 	// destructor
 	~Vector();
+
+	// operators
+	Vector operator=(const Vector& other);
 
 	// getters
 	int size() const;
 	int capacity() const;
 	int resizeFactor() const;
+	int* copyElements() const;
 	bool empty() const;
 
 	// methods
 	void push_back(const int& val);
 	int pop_back();
 	void reserve(int n);
+	void resize(int n);
+	void resize(int n, const int& val);
 };
