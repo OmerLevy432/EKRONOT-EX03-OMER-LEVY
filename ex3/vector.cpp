@@ -15,14 +15,14 @@ Vector::Vector(int n)
 	this->_capacity = n;
 	this->_resizeFactor = n;
 	this->_size = 0;
-	this->_elements = new int(n);
+	this->_elements = new int[n];
 }
 
 Vector::Vector(const Vector& other)
 {
 	this->_capacity = other.capacity();
 	this->_resizeFactor = other.capacity();
-	this->_size = 0;
+	this->_size = other.size();
 	this->_elements = other.copyElements();
 }
 
@@ -32,6 +32,8 @@ Vector Vector::operator=(const Vector& other)
 	this->_resizeFactor = other.capacity();
 	this->_size = 0;
 	this->_elements = other.copyElements();
+
+	return *this;
 }
 
 Vector::~Vector()
@@ -39,8 +41,18 @@ Vector::~Vector()
 	this->_capacity = 0;
 	this->_resizeFactor = 0;
 	this->_size = 0;
-	delete this->_elements;
+	delete[] this->_elements;
 	this->_elements = nullptr;
+}
+
+int Vector::operator[](const int index) const
+{
+	// if the index is out of bound
+	if (index < 0 || index >= this->_capacity)
+	{
+		std::cerr << "Index out of bound. index: " << index << ", vector's length: " << this->_capacity << "\n";
+	}
+	return this->_elements[index];
 }
 
 int Vector::size() const
@@ -86,8 +98,8 @@ int Vector::pop_back()
 	}
 
 	// gets the last item and removes it from the vector
-	int item = this->_elements[this->_size];
-	this->_elements[this->_size--] = 0;
+	int item = this->_elements[--this->_size];
+	this->_elements[this->_size] = 0;
 
 	return item;
 }

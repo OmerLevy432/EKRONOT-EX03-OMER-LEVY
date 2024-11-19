@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 
 #define SMALLEST_VECTOR_SIZE 2
@@ -24,6 +25,7 @@ public:
 
 	// operators
 	Vector operator=(const Vector& other);
+	int operator[](const int index) const;
 
 	// getters
 	int size() const;
