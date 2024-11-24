@@ -13,7 +13,7 @@ Vector::Vector(int n)
 	}
 
 	this->_capacity = n;
-	this->_resizeFactor = n;
+	this->_resizeFactor = n / 2;
 	this->_size = 0;
 	this->_elements = new int[n];
 }
@@ -30,7 +30,7 @@ Vector Vector::operator=(const Vector& other)
 {
 	this->_capacity = other.capacity();
 	this->_resizeFactor = other.capacity();
-	this->_size = 0;
+	this->_size = other.size();
 	this->_elements = other.copyElements();
 
 	return *this;
@@ -48,9 +48,10 @@ Vector::~Vector()
 int Vector::operator[](const int index) const
 {
 	// if the index is out of bound
-	if (index < 0 || index >= this->_capacity)
+	if (index < 0 || index >= this->_size)
 	{
 		std::cerr << "Index out of bound. index: " << index << ", vector's length: " << this->_capacity << "\n";
+		return this->_elements[0];
 	}
 	return this->_elements[index];
 }
@@ -104,12 +105,12 @@ int Vector::pop_back()
 	return item;
 }
 
-void Vector::reserve(int n)
+void Vector::reserve(const int n)
 {
 	// checks if n is bigger than the current capacity
 	if (n > this->_capacity)
 	{
-		int arraySize = ((n - this->_capacity) / this->_resizeFactor) * this->_resizeFactor + (((n % this->_resizeFactor) != 0) * this->_resizeFactor);
+		int arraySize = ((n / this->_resizeFactor) * this->_resizeFactor) + ((this->_resizeFactor) * (n / this->_resizeFactor != 0));
 		int* newArray = new int[arraySize];
 		int i = 0;
 
@@ -137,7 +138,7 @@ void Vector::push_back(const int& val)
 	this->_elements[this->_size++] = val;
 }
 
-void Vector::resize(int n)
+void Vector::resize(const int n)
 {
 	// checks if the size of the vector is reduced
 	if (n < this->_capacity)
@@ -164,7 +165,7 @@ void Vector::resize(int n)
 	}
 }
 
-void Vector::resize(int n, const int& val)
+void Vector::resize(const int n, const int& val)
 {
 	int oldCapacity = this->_capacity;
 	this->resize(n);

@@ -37,7 +37,7 @@ public:
 	// methods
 	void push_back(const int& val);
 	int pop_back();
-	void reserve(int n);
-	void resize(int n);
-	void resize(int n, const int& val);
+	void reserve(const int n);
+	void resize(const int n);
+	void resize(const int n, const int& val);
 };
